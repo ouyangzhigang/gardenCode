@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="css/index.css"/>
+    <style>
+        #canvaseWrap{
+            width: 640px;
+            height: 568px;
+            background-color: #59aed8;
+            border: 1px solid black;;
+            overflow: hidden;
+            position: relative;
+
+        }
+        #canvasImg{
+            width: 640px;
+            height: 568px;
+            margin: 0 auto;
+            background-color: #fff;
+        }
+        #canvasBg{
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="canvaseWrap">
+    <div id="canvasImg"></div>
+    <img src="img/canvas_bg.png" id="canvasBg" alt=""/>
+    <img src="img/canvas_mask.png" style="position: absolute;left: 0;top: 0;width: 100%;" alt=""/>
+    <img src="img/stick.png" style="position: absolute;left: 0;top: 0;" alt=""/>
+</div>
+<div class="colorButton" data-color="#dc3b4d" style="background-color: rgb(220, 59, 77);width: 75px;height: 75px;"></div>
+<button id="createImg">生成图片</button>
+</body>
+<script src="js/jquery.js"></script>
+<script src="js/faskclick.js"></script>
+<script src="js/lufylegend.min.js"></script>
+<script>
+
+    FastClick.attach(document.body);
+
+
+    //图层列表
+    var layerList=[];
+
+    //点击图片索引值
+    var layerIndex = 0;
+
+    //上一次点击图片的索引值
+    var lastLayerIndex = 0;
+
+    //颜色值信息
+    var chioceColor = "ff0101";
+    var choiceRed = 255;
+    var choiceGreen = 1;
+    var choiceBlue = 1;
+
+
+    //防止一开始上色
+    var buttonBol = false;
+
+
+    //每层的定位信息
+    var layerPostions = [
+        {layerX:330,layerY:195,aimpointX:370,aimPointY:245,nickname:'tyre'},
+        {layerX:246,layerY:43,aimpointX:256,aimPointY:53,nickname:'key1'},
+        {layerX:218,layerY:360,aimpointX:255,aimPointY:400,nickname:'steeringWheel'}
+    ];
+
+
+
+    // 需要加载的数据
+    var loadData = [
+        {name:"img0",path:"./img/tyre_bg.png",nickname:'tyre'},
+        {name:"img1",path:"./img/key1.png",nickname:'key1'},
+        {name:"img2",path:"./img/steeringWheel.png",nickname:'steeringWheel'}
+    ];
+
+    init(50,'canvasImg',640,568,main);
+    function main(){
+        LLoadManage.load(loadData,function(progress){
+        },gameInit);
+    }
+    function gameInit (result) {
+
+        /* 蒙版 */
+        var maskLayer = new LSprite();
+        maskLayer.graphics.drawRect(0,"#000000",[0,0,LGlobal.width,LGlobal.height],true,'rgba(0,0,0,.5)');
+        maskLayer.alpha = 0.5;
+
+
+        /* 包裹层 */
+        var container = new LSprite();
+
+
+        /* 初始化每个layer */
+        for(var i = 0,len = layerPostions.length;i<len;i++){
+            var layer = new LSprite();
+            var img = 'img'+i;
+            var bitmapdata = new LBitmapData(result[img]);
+            var bitmap = new LBitmap(bitmapdata);
+            layer.x = layerPostions[i].layerX;
+            layer.y = layerPostions[i].layerY;
+            layer.addChild(bitmap);
+            container.addChild(layer);
+            var $img = $('<img src="img/aimpoint.png" class="aimPoint" alt=""/>');
+            $img.css({
+                left:layerPostions[i].aimpointX,
+                top:layerPostions[i].aimPointY
+            }).appendTo($("#canvaseWrap"));
+        }
+
+
+        addChild(container);
+
+
+        /* 初始化layerList */
+        for(var i= 0,len =container.childList.length;i<len;i++ ){
+            var obj = {
+                name : "layer" +(i+1),
+                layer:container.childList[i],
+                bitmapdata:container.childList[i].childList[0].bitmapData,
+                container:container
+            };
+            container.childList[i].backColor = "ffffff";
+            layerList.push(obj);
+        }
+
+        //准心
+        $(".aimPoint").on('click', function () {
+            var index = $(this).index('.aimPoint');
+            layerList[lastLayerIndex].layer.mask = null;
+            layerIndex = lastLayerIndex = index;
+            layerList[index].layer.mask = maskLayer;
+            layerList[layerIndex].oldLayerIndex = container.getChildIndex(layerList[layerIndex].layer);
+            container.setChildIndex(layerList[layerIndex].layer, container.childList.length - 1);
+            buttonBol = true;
+
+        });
+
+        //颜色
+        $(".colorButton").eq(0).on('click', function () {
+            if(!buttonBol)return;
+            buttonBol = false;
+            chioceColor = this.getAttribute("data-color").replace("#","");
+            choiceRed =parseInt(chioceColor.substring(0,2),16);
+            choiceGreen =parseInt(chioceColor.substring(2,4),16);
+            choiceBlue =parseInt(chioceColor.substring(4),16) ;
+            var layer = layerList[layerIndex].layer;
+            var bitmapdata = layerList[layerIndex].bitmapdata;
+            var container = layerList[layerIndex].container;
+            var rect = new LRectangle(0, 0, bitmapdata.getWidth(), bitmapdata.getHeight());
+            var img = bitmapdata.getPixels(rect);
+            bitmapdata.lock();
+            var oldArr = img.data;
+            //var start = (new Date()).valueOf();
+            for(var i = 0,len = oldArr.length;i<len;i+=8){
+                if(img.data[i+3] !== 0){
+                    img.data[i] = choiceRed;
+                    img.data[i+1] = choiceGreen;
+                    img.data[i+2] = choiceBlue;
+                }
+                if(img.data[i+7] !== 0){
+                    img.data[i+4] = choiceRed;
+                    img.data[i+5] = choiceGreen;
+                    img.data[i+6] = choiceBlue;
+                }
+            }
+            //var end = (new Date()).valueOf();
+            //alert('Time spent: '+(end - start));
+            layer.backColor = chioceColor;
+            bitmapdata.setPixels(new LRectangle(0, 0, bitmapdata.getWidth(), bitmapdata.getHeight()),img);
+            bitmapdata.unlock();
+            container.setChildIndex(layer,container.childList.length-1);
+            layer.mask = null;
+        })
+
+
+        //生成用户自己填的图
+        $("#createImg").on('click', function () {
+            var base64Str = container.getDataURL();
+            var $img = $('<img>');
+            $img.attr("src",base64Str);
+            $('body').append($img);
+        });
+
+
+    }
+
+
+
+
+</script>
+</html>

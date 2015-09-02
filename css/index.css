@@ -3685,6 +3685,10 @@ body {
   top: 750px;
 }
 /* page2 */
+.aimPoint {
+  width: 50px;
+  position: absolute;
+}
 .ColorButtons {
   position: absolute;
   left: 0;
@@ -3703,8 +3707,8 @@ body {
   margin-bottom: 15px;
 }
 .page_bottom {
-  width: 80%;
-  padding: 0 70px;
+  width: 88%;
+  padding: 0 50px;
   position: absolute;
   top: 930px;
 }
@@ -3726,4 +3730,17 @@ body {
   display: inline-block;
   left: 110px;
   top: 165px;
+}
+/* page4 */
+.page4_step1 {
+  position: absolute;
+  display: inline-block;
+  left: 20px;
+  top: 30px;
+}
+.page4_step2 {
+  position: absolute;
+  display: inline-block;
+  left: 100px;
+  top: 600px;
 }
