@@ -1,0 +1,51 @@
+@charset "UTF-8";
+@import "reset";
+@import "animate";
+@import "swiper";
+
+
+
+/* swiper */
+.swiper-container{width: 100%; height: 100%; background-color: #6ad3ef;}
+.swiper-slide{position: relative; overflow: hidden;}
+.bg{.image_bg_pos();}
+
+
+/* page1 */
+.page1_step1{.image_pos(70px,190px)}
+.page1_step2{.image_pos(50px,95px)}
+.page1_step3{.image_pos(90px,520px)}
+.page1_step4{.image_pos(185px,750px)}
+
+
+/* page2 */
+.ColorButtons{
+  position: absolute;
+  left: 0;
+  width: 80%;
+  padding: 0 90px;
+  top: 690px;
+  overflow: hidden;
+}
+.ColorButtons>div{
+  width: 75px;
+  height: 75px;
+  border: 5px solid #ffffff;
+  border-radius: 500px;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 15px;
+}
+.page_bottom{
+  width: 80%;
+  padding: 0 70px;
+  position: absolute;
+  top: 930px;
+}
+#eraser{.image_pos(30px,530px)}
+#reset{.image_pos(480px,570px)}
+
+
+
+/* page3 */
+.page3_step1{.image_pos(110px,165px)}

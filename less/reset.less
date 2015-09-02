@@ -1,0 +1,128 @@
+@charset "UTF-8";
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+//  vertical-align: baseline;
+}
+
+html {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+q, blockquote {
+  quotes: none;
+}
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+a img {
+  border: none;
+}
+img{
+  vertical-align:top;
+}
+article, aside, details, figcaption, figure, footer, header, main, menu, nav, section, summary {
+  display: block;
+}
+
+
+a{
+  text-decoration: none;
+}
+.image_bg_pos(@w:100%, @h:100%,@x:0, @y:0 ){
+  position: absolute;
+  display: inline-block;
+  left: @x;
+  top: @y;
+  width: @w;
+  height: @h;
+}
+
+.image_pos(@x:0, @y:0 ){
+  position: absolute;
+  display: inline-block;
+  left: @x;
+  top: @y;
+}
+.fr{
+  float: right;
+}
+.fl{
+  float: left;
+}
+html{
+  font-size: 62.5%;
+}
+
+html, body {
+  margin: 0;
+  height: 1008px;
+  width: 100%;
+  overflow-x: hidden;
+  user-select: none;
+  position: relative;
+  padding: 0;
+  font-size: 30px;
+  background-color: #6ad3ef;
+  -webkit-perspective: 0px!important;
+  -webkit-backface-visibility: visible!important;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+
+@media only screen and (min-device-width: 375px) and (max-device-width: 667px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 2) {
+  html, body {
+    min-height: 1030px;
+  }
+}
+
+@media only screen and (min-device-width: 375px) and (max-device-width: 667px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
+  html, body {
+    min-height: 1030px;
+  }
+}
+
+@media only screen and (min-device-width: 414px) and (max-device-width: 736px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 3) {
+  html, body {
+    min-height: 1041px;
+  }
+}
+
+@media only screen and (min-device-width: 414px) and (max-device-width: 736px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 3) {
+  html, body {
+    min-height: 1041px;
+  }
+}
