@@ -20,24 +20,57 @@
     <meta charset="UTF-8">
     <title>青花君秘密花园</title>
     <link rel="stylesheet" href="css/index.css"/>
+    <style type="text/css">
+      #canvaseWrap{
+            width: 640px;
+            height: 643px;	
+            /*background: ;*/
+            overflow: hidden;
+            position: relative;
+        }
+        #canvasImg{
+            width: 640px;
+            height: 568px;
+            position: absolute;
+            left: 0;
+            top: 73px;
+        }
+        #canvasBg{
+            position: absolute;
+            width: 100%;
+            left: 0;
+        }
+        .maskImg{position: absolute;left: 0;top: 0;width: 100%;pointer-events: none;}
+        .page_bottom img{z-index: 9;}
+        .cloud{position: absolute;top: 111px;left: 59px;z-index: -1;width: 533px;}
+        #ImgCompelete{width: 640px;text-align: center;vertical-align: middle;z-index: 99;overflow:hidden;position: absolute;top: 369px;left: 0;}
+        #IC_bgImg{position: absolute;top: 21px;left: 0;width: 640px;z-index: 1;}
+        #cloudBgImg{position: absolute;z-index: 0;width: 535px;top: 29px;left: 56px;z-index: -1;}
+        #draw{opacity: 0;background-color: rgba(106,211,239);transition:all 1s;-webkit-transition:all 1s;}
+        /*#mask{width: 640px;height: 100%;position: absolute;top: 0;left: 0;-webkit-mask:url(img/canvas_mask.png) 3px -73.5px no-repeat;pointer-events: none;z-index:21;}*/
+    </style>
 </head>
 <body>
 <div class="swiper-container">
     <div class="swiper-wrapper">
         <!-- page1 -->
         <div class="swiper-slide">
-            <img src="img/bg_title.png" class="bg" alt=""/>
+            <img src="img/bg_title.png" class="bg" alt="" />
             <img src="img/page1_step2.png" class="page1_step2 ani" swiper-animate-effect="fadeOut" swiper-animate-duration="1.5s" swiper-animate-delay="1.3s"  alt=""/>
             <img src="img/page1_step1.png" class="page1_step1 ani" alt=""/>
             <img src="img/page1_step3.png" class="page1_step3 ani" swiper-animate-effect="fadeIn" swiper-animate-duration="1.5s" swiper-animate-delay="0.5s" alt=""/>
             <img src="img/page1_step4.png" class="page1_step4 ani" swiper-animate-effect="fadeIn" swiper-animate-duration="1.5s" swiper-animate-delay="0.5s" alt=""/>
         </div>
 
-
         <!-- page2 -->
-        <div class="swiper-slide">
-            <img src="img/bg_title.png" class="bg" alt=""/>
-
+        <div class="swiper-slide" id="draw" >
+            <div id="canvaseWrap">
+			    <div id="canvasImg"></div>
+			    <img src="img/canvasBg.png" id="canvasBg" alt=""/>
+			    <img src="img/cloud.png" class="cloud" alt="" />
+			    <!--<img src="img/canvas_mask.png" style="position: absolute;left: 0;top: 0;width: 100%;" alt=""/>-->
+			    <!--<img src="img/stick.png" style="position: absolute;left: 0;top: 0;" alt=""/>-->
+            </div>
             <div class="ColorButtons">
                 <div class="colorButton" data-color="#e60012"></div>
                 <div class="colorButton" data-color="#dc3b4d"></div>
@@ -57,7 +90,6 @@
             </div>
             <img src="img/eraser.png" id="eraser" alt=""/>
             <img src="img/reset.png" id="reset" alt=""/>
-
         </div>
 
 
@@ -65,6 +97,10 @@
         <div class="swiper-slide">
             <img src="img/bg_title.png" class="bg" alt=""/>
             <img src="img/page3_step1.png" class="page3_step1" alt=""/>
+            <div id="ImgCompelete">
+            	<img src="img/canvasBgCp.png" id="IC_bgImg" />
+            	<img src="img/cloud.png" id="cloudBgImg" />
+            </div>
             <div class="page_bottom">
                 <img src="img/page3_step2.png" class="fl gotoIndex" alt=""/>
                 <img src="img/page3_step3.png" class="fr page3_next" alt=""/>
@@ -96,4 +132,171 @@
 <script src="js/faskclick.js"></script>
 <script src="js/lufylegend.js"></script>
 <script src="js/index.js"></script>
+<script type="text/javascript">
+	FastClick.attach(document.body);
+	
+    //图层列表
+    var layerList=[];
+
+    //点击图片索引值
+    var layerIndex = 0;
+
+    //上一次点击图片的索引值
+    var lastLayerIndex = 0;
+
+    //颜色值信息
+    var chioceColor = "ff0101";
+    var choiceRed = 255;
+    var choiceGreen = 1;
+    var choiceBlue = 1;
+
+
+    //防止一开始上色
+    var buttonBol = false;
+
+
+    //每层的定位信息
+    var layerPostions = [
+        {layerX:279,layerY:79,aimpointX:276,aimPointY:205,nickname:'key1'},
+        {layerX:349,layerY:213,aimpointX:375,aimPointY:333,nickname:'tyre'},
+        {layerX:253,layerY:363,aimpointX:285,aimPointY:458,nickname:'steeringWheel'},
+        {layerX:387,layerY:369,aimpointX:419,aimPointY:465,nickname:'imgsThree'},
+        {layerX:555,layerY:263,aimpointX:285,aimPointY:458,nickname:'cloud'},
+        {layerX:107,layerY:158,aimpointX:185,aimPointY:258,nickname:'imgs5'},
+        {layerX:377,layerY:308,aimpointX:455,aimPointY:388,nickname:'stick'},
+        {layerX:139,layerY:305,aimpointX:145,aimPointY:381,nickname:'WellCloud'},
+        {layerX:251,layerY:241,aimpointX:275,aimPointY:325,nickname:'RuiPin'},
+        {layerX:196,layerY:249,aimpointX:195,aimPointY:338,nickname:'smallKey'},
+        {layerX:351,layerY:99,aimpointX:377,aimPointY:183,nickname:'CollarRound'},
+        {layerX:463,layerY:167,aimpointX:481,aimPointY:259,nickname:'imgs2'}   
+    ];
+
+
+
+    // 需要加载的数据
+    var loadData = [
+        {name:"img0",path:"./img/key1.png",nickname:'key1'},
+        {name:"img1",path:"./img/tyre_bg.png",nickname:'tyre'},
+        {name:"img2",path:"./img/steeringWheel.png",nickname:'steeringWheel'},
+        {name:"img3",path:"./img/img3.png",nickname:'imgsThree'},
+        {name:"img4",path:"./img/cloud.png",nickname:'cloud'},
+        {name:"img5",path:"./img/img5.png",nickname:'imgs5'},
+        {name:"img6",path:"./img/stick.png",nickname:'stick'},
+        {name:"img7",path:"./img/WellCloud.png",nickname:'WellCloud'},
+        {name:"img8",path:"./img/RuiPin.png",nickname:'RuiPin'},
+        {name:"img9",path:"./img/smallKey.png",nickname:'smallKey'},
+        {name:"img10",path:"./img/img1.png",nickname:'CollarRound'},
+        {name:"img11",path:"./img/img2.png",nickname:'imgs2'}    
+    ];
+
+    init(50,'canvasImg',640,568,main);
+    function main(){
+        LLoadManage.load(loadData,function(progress){
+        },gameInit);
+    }
+    function gameInit (result) {
+
+        /* 蒙版 */
+        var maskLayer = new LSprite();
+        maskLayer.graphics.drawRect(0,"#000000",[0,0,LGlobal.width,LGlobal.height],true,'rgba(0,0,0,.5)');
+        maskLayer.alpha = 0.5;
+
+
+        /* 包裹层 */
+        var container = new LSprite();
+
+
+        /* 初始化每个layer */
+        for(var i = 0,len = layerPostions.length;i<len;i++){
+            var layer = new LSprite();
+            var img = 'img'+i;
+            var bitmapdata = new LBitmapData(result[img]);
+            var bitmap = new LBitmap(bitmapdata);
+            layer.x = layerPostions[i].layerX;
+            layer.y = layerPostions[i].layerY;
+            layer.addChild(bitmap);
+            container.addChild(layer);
+            var $img = $('<img src="img/aimpoint.png" class="aimPoint" alt=""/>');
+            $img.css({
+                left:layerPostions[i].aimpointX,
+                top:layerPostions[i].aimPointY
+            }).appendTo($("#canvaseWrap"));
+        }
+ 
+         
+        addChild(container);
+
+        /* 初始化layerList */
+        for(var i= 0,len =container.childList.length;i<len;i++ ){
+            var obj = {
+                name : "layer" +(i+1),
+                layer:container.childList[i],
+                bitmapdata:container.childList[i].childList[0].bitmapData,
+                container:container
+            };
+            container.childList[i].backColor = "ffffff";
+            layerList.push(obj);
+        }
+
+        //准心
+        $(".aimPoint").on('click', function () {
+            var index = $(this).index('.aimPoint');
+            layerList[lastLayerIndex].layer.mask = null;
+            layerIndex = lastLayerIndex = index;
+            layerList[index].layer.mask = maskLayer;
+            layerList[layerIndex].oldLayerIndex = container.getChildIndex(layerList[layerIndex].layer);
+            container.setChildIndex(layerList[layerIndex].layer, container.childList.length - 1);
+            buttonBol = true;
+
+        });
+
+        //颜色
+      for(var i=0;i<$(".colorButton").length;i++){
+        $(".colorButton").eq(i).on('click', function () {
+            if(!buttonBol)return;
+            buttonBol = false;
+            chioceColor = $(this).attr("data-color").replace("#","");
+            choiceRed =parseInt(chioceColor.substring(0,2),16);
+            choiceGreen =parseInt(chioceColor.substring(2,4),16);
+            choiceBlue =parseInt(chioceColor.substring(4),16) ;
+            var layer = layerList[layerIndex].layer;
+            var bitmapdata = layerList[layerIndex].bitmapdata;
+            var container = layerList[layerIndex].container;
+            var rect = new LRectangle(0, 0, bitmapdata.getWidth(), bitmapdata.getHeight());
+            var img = bitmapdata.getPixels(rect);
+            bitmapdata.lock();
+            var oldArr = img.data;
+            //var start = (new Date()).valueOf();
+            for(var i = 0,len = oldArr.length;i<len;i+=8){
+                if(img.data[i+3] !== 0){
+                    img.data[i] = choiceRed;
+                    img.data[i+1] = choiceGreen;
+                    img.data[i+2] = choiceBlue;
+                }
+                if(img.data[i+7] !== 0){
+                    img.data[i+4] = choiceRed;
+                    img.data[i+5] = choiceGreen;
+                    img.data[i+6] = choiceBlue;
+                }
+            }
+            //var end = (new Date()).valueOf();
+            //alert('Time spent: '+(end - start));
+            layer.backColor = chioceColor;
+            bitmapdata.setPixels(new LRectangle(0, 0, bitmapdata.getWidth(), bitmapdata.getHeight()),img);
+            bitmapdata.unlock();
+            container.setChildIndex(layer,container.childList.length-1);
+            layer.mask = null;
+        })
+      }    
+        //生成用户自己填的图
+        $(".page2_submit").on('click', function () {
+            var base64Str = container.getDataURL();
+            var $img = $('<img>');
+            $img.attr("src",base64Str);
+            $('#ImgCompelete').append($img);
+        });
+
+
+    }
+</script>
 </html>

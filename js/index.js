@@ -35,7 +35,7 @@ $(document).ready(function () {
 
     //page1
     $(".page1_step4").on('click', function () {
-       mySwiper.slideNext();
+       mySwiper.slideNext(); 
     });
 
     //page2

@@ -3,13 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
+    <script type="text/javascript">
+        if (/Android (\d+\.\d+)/.test(navigator.userAgent)) {
+            var version = parseFloat(RegExp.$1);
+            if (version > 2.3) {
+                var phoneScale = parseInt(window.screen.width) / 640;
+                document.write('<meta name="viewport" content="width=640, minimum-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', target-densitydpi=device-dpi">');
+            } else {
+                document.write('<meta name="viewport" content="width=640, target-densitydpi=device-dpi">');
+            }
+        } else {
+            document.write('<meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi">');
+        }
+
+    </script>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="stylesheet" href="css/index.css"/>
     <style>
         #canvaseWrap{
             width: 640px;
             height: 568px;
             background-color: #59aed8;
-            border: 1px solid black;;
             overflow: hidden;
             position: relative;
 
@@ -24,15 +39,17 @@
             position: absolute;
             left: 0;
             top: 0;
+            /*width: 100%;*/
         }
+        .mask{position:absolute;width: 640px;height:100%;background-color: #6ad3ef;-webkit-mask:url(img/canvas_mask.png) 55px no-repeat;top: 0;left: 0;}
     </style>
 </head>
 <body>
 <div id="canvaseWrap">
     <div id="canvasImg"></div>
     <img src="img/canvas_bg.png" id="canvasBg" alt=""/>
-    <img src="img/canvas_mask.png" style="position: absolute;left: 0;top: 0;width: 100%;" alt=""/>
-    <img src="img/stick.png" style="position: absolute;left: 0;top: 0;" alt=""/>
+    <!--<img src="img/stick.png" style="position: absolute;left: 0;top: 0;" alt=""/>-->
+    <div class="mask"></div>
 </div>
 <div class="colorButton" data-color="#dc3b4d" style="background-color: rgb(220, 59, 77);width: 75px;height: 75px;"></div>
 <button id="createImg">生成图片</button>
@@ -41,9 +58,8 @@
 <script src="js/faskclick.js"></script>
 <script src="js/lufylegend.min.js"></script>
 <script>
-
     FastClick.attach(document.body);
-
+    
 
     //图层列表
     var layerList=[];
